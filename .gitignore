@@ -1,0 +1,35 @@
+# Variáveis de ambiente
+.env
+.env.local
+backend/.env
+frontend/.env
+frontend/.env.local
+deployment/.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+backend/.venv/
+
+# Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/playwright-report/
+frontend/test-results/
+frontend/playwright/.auth/
+
+# Uploads locais
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Editores
+.vscode/
+.idea/
+
+# Sistemas operacionais
+.DS_Store
+Thumbs.db
