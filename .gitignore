@@ -17,6 +17,7 @@ backend/.venv/
 # Next.js
 frontend/node_modules/
 frontend/.next/
+frontend/.next-stale-*/
 frontend/out/
 frontend/playwright-report/
 frontend/test-results/

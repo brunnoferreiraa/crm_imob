@@ -94,6 +94,7 @@ const words: Record<string, string> = {
   "Código, título ou bairro": "Code, title or neighborhood",
 };
 const originals = new WeakMap<Node, string>();
+const originalAttributes = new WeakMap<HTMLElement, Map<string, string>>();
 function translate(locale: Locale) {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
@@ -115,9 +116,13 @@ function translate(locale: Locale) {
       ["placeholder", "title"].forEach((attr) => {
         const current = el.getAttribute(attr);
         if (!current) return;
-        const data = `i18n${attr}`;
-        if (!el.dataset[data]) el.dataset[data] = current;
-        const source = el.dataset[data]!;
+        let attributes = originalAttributes.get(el);
+        if (!attributes) {
+          attributes = new Map<string, string>();
+          originalAttributes.set(el, attributes);
+        }
+        if (!attributes.has(attr)) attributes.set(attr, current);
+        const source = attributes.get(attr)!;
         el.setAttribute(
           attr,
           locale === "en" ? words[source] || source : source,
@@ -136,14 +141,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(timer);
   }, []);
   useEffect(() => {
-    translate(locale);
-    const observer = new MutationObserver(() => translate(locale));
-    observer.observe(document.body, {
-      subtree: true,
-      childList: true,
-      characterData: true,
-    });
-    return () => observer.disconnect();
+    let observer: MutationObserver | undefined;
+    const timer = window.setTimeout(() => {
+      translate(locale);
+      observer = new MutationObserver(() => translate(locale));
+      observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+      });
+    }, 0);
+    return () => {
+      window.clearTimeout(timer);
+      observer?.disconnect();
+    };
   }, [locale]);
   const setLocale = (v: Locale) => {
     localStorage.setItem("imobcrm-language", v);
