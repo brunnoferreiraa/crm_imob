@@ -1,1 +1,4 @@
-import{proxyApi}from"@/lib/api-proxy";export async function POST(request:Request){return proxyApi(request,"auth/change-password",[])}
+import { proxyApi } from "@/lib/api-proxy";
+export async function POST(request: Request) {
+  return proxyApi(request, "auth/change-password", []);
+}

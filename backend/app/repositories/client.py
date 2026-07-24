@@ -12,14 +12,20 @@ class ClientRepository:
     def __init__(self, database: Session) -> None:
         self.database = database
 
-    def scoped_query(self, responsible_id: uuid.UUID | None = None) -> Select[tuple[Client]]:
+    def scoped_query(
+        self, responsible_id: uuid.UUID | None = None
+    ) -> Select[tuple[Client]]:
         query = select(Client).where(Client.deleted_at.is_(None))
         if responsible_id:
             query = query.where(Client.responsible_id == responsible_id)
         return query
 
-    def get(self, client_id: uuid.UUID, scope_id: uuid.UUID | None = None) -> Client | None:
-        return self.database.scalar(self.scoped_query(scope_id).where(Client.id == client_id))
+    def get(
+        self, client_id: uuid.UUID, scope_id: uuid.UUID | None = None
+    ) -> Client | None:
+        return self.database.scalar(
+            self.scoped_query(scope_id).where(Client.id == client_id)
+        )
 
     def list(
         self,
@@ -55,11 +61,16 @@ class ClientRepository:
         if responsible_id:
             query = query.where(Client.responsible_id == responsible_id)
 
-        total = self.database.scalar(select(func.count()).select_from(query.subquery())) or 0
+        total = (
+            self.database.scalar(select(func.count()).select_from(query.subquery()))
+            or 0
+        )
         column = getattr(Client, order_by)
         ordering = column.asc() if order == "asc" else column.desc()
         items = list(
-            self.database.scalars(query.order_by(ordering).offset(offset).limit(limit)).unique()
+            self.database.scalars(
+                query.order_by(ordering).offset(offset).limit(limit)
+            ).unique()
         )
         return items, total
 

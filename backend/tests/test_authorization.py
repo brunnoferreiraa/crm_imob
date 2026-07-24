@@ -32,7 +32,9 @@ def test_broker_cannot_access_administrative_users() -> None:
         broker_id = broker.id
 
     try:
-        login = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+        login = client.post(
+            "/api/v1/auth/login", json={"email": email, "password": password}
+        )
         assert login.status_code == 200
         access_token = login.json()["access_token"]
 
@@ -43,7 +45,9 @@ def test_broker_cannot_access_administrative_users() -> None:
         assert response.status_code == 403
     finally:
         with SessionLocal() as database:
-            database.execute(delete(RefreshToken).where(RefreshToken.user_id == broker_id))
+            database.execute(
+                delete(RefreshToken).where(RefreshToken.user_id == broker_id)
+            )
             database.execute(delete(User).where(User.id == broker_id))
             database.commit()
 
@@ -64,17 +68,26 @@ def test_refresh_rotation_prevents_reuse() -> None:
         user_id = user.id
 
     try:
-        login = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+        login = client.post(
+            "/api/v1/auth/login", json={"email": email, "password": password}
+        )
         old_refresh = login.json()["refresh_token"]
-        rotated = client.post("/api/v1/auth/refresh", json={"refresh_token": old_refresh})
+        rotated = client.post(
+            "/api/v1/auth/refresh", json={"refresh_token": old_refresh}
+        )
 
         assert rotated.status_code == 200
         assert rotated.json()["refresh_token"] != old_refresh
-        assert client.post(
-            "/api/v1/auth/refresh", json={"refresh_token": old_refresh}
-        ).status_code == 401
+        assert (
+            client.post(
+                "/api/v1/auth/refresh", json={"refresh_token": old_refresh}
+            ).status_code
+            == 401
+        )
     finally:
         with SessionLocal() as database:
-            database.execute(delete(RefreshToken).where(RefreshToken.user_id == user_id))
+            database.execute(
+                delete(RefreshToken).where(RefreshToken.user_id == user_id)
+            )
             database.execute(delete(User).where(User.id == user_id))
             database.commit()

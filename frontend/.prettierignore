@@ -1,0 +1,8 @@
+node_modules
+.next
+.next-stale-*
+out
+playwright-report
+test-results
+playwright/.auth
+public

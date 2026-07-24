@@ -23,7 +23,11 @@ AdminUser = Annotated[User, Depends(require_permission(Permission.USERS_MANAGE))
 
 
 def handle_user_error(error: ValueError) -> None:
-    code = status.HTTP_404_NOT_FOUND if isinstance(error, UserNotFoundError) else status.HTTP_409_CONFLICT
+    code = (
+        status.HTTP_404_NOT_FOUND
+        if isinstance(error, UserNotFoundError)
+        else status.HTTP_409_CONFLICT
+    )
     raise HTTPException(status_code=code, detail=str(error)) from error
 
 

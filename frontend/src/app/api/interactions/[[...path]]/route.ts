@@ -1,1 +1,7 @@
-import {proxyApi}from "@/lib/api-proxy";type C={params:Promise<{path?:string[]}>};async function h(r:Request,c:C){const{path=[]}=await c.params;return proxyApi(r,"interactions",path)}export{h as POST};
+import { proxyApi } from "@/lib/api-proxy";
+type C = { params: Promise<{ path?: string[] }> };
+async function h(r: Request, c: C) {
+  const { path = [] } = await c.params;
+  return proxyApi(r, "interactions", path);
+}
+export { h as POST };

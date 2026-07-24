@@ -16,7 +16,12 @@ async function forward(request: Request, path: string[]) {
     const contentType = request.headers.get("content-type");
     if (contentType) headers.set("Content-Type", contentType);
     if (token) headers.set("Authorization", `Bearer ${token}`);
-    return fetch(target, { method: request.method, headers, body, cache: "no-store" });
+    return fetch(target, {
+      method: request.method,
+      headers,
+      body,
+      cache: "no-store",
+    });
   }
 
   let response = await callApi(accessToken);
@@ -47,8 +52,20 @@ async function forward(request: Request, path: string[]) {
   });
   if (rotatedRefresh && accessToken) {
     const secure = process.env.NODE_ENV === "production";
-    result.cookies.set("access_token", accessToken, { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 1800 });
-    result.cookies.set("refresh_token", rotatedRefresh, { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: 604800 });
+    result.cookies.set("access_token", accessToken, {
+      httpOnly: true,
+      secure,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 1800,
+    });
+    result.cookies.set("refresh_token", rotatedRefresh, {
+      httpOnly: true,
+      secure,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 604800,
+    });
   }
   return result;
 }

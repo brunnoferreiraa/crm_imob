@@ -1,7 +1,10 @@
-import { z } from "zod";
 import { propertyTypes } from "@/lib/property-types";
+import { z } from "zod";
 
-const optionalNumber = z.string().optional().transform((value) => value ? Number(value) : null);
+const optionalNumber = z
+  .string()
+  .optional()
+  .transform((value) => (value ? Number(value) : null));
 
 export const clientSchema = z.object({
   name: z.string().min(2, "Informe o nome"),
@@ -13,7 +16,10 @@ export const clientSchema = z.object({
   lead_source: z.string().optional(),
   status: z.enum(["novo", "em_atendimento", "qualificado", "inativo"]),
   notes: z.string().optional(),
-  property_type: z.enum(propertyTypes.map(([value]) => value) as [string, ...string[]]).optional().or(z.literal("")),
+  property_type: z
+    .enum(propertyTypes.map(([value]) => value) as [string, ...string[]])
+    .optional()
+    .or(z.literal("")),
   budget_min: optionalNumber,
   budget_max: optionalNumber,
   bedrooms: optionalNumber,

@@ -1,5 +1,7 @@
 "use client";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { NotificationBell } from "@/components/notification-bell";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -25,8 +27,6 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { NotificationBell } from "@/components/notification-bell";
-import { LanguageSwitcher } from "@/components/language-switcher";
 
 const operation = [
   ["/dashboard", "Visão geral", LayoutDashboard],
@@ -127,9 +127,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </span>
           <span>
             <strong className="block text-lg leading-none">ImobCRM</strong>
-            <small className="text-[11px] text-slate-500">
-              Gestão imobiliária
-            </small>
+            <small className="text-[11px] text-slate-500">Gestão imobiliária</small>
           </span>
         </Link>
         <div className="relative flex-1 overflow-y-auto pr-1">{navigation}</div>
@@ -139,12 +137,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               {me.data?.full_name?.charAt(0) || "U"}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold">
-                {me.data?.full_name}
-              </p>
-              <p className="truncate text-[11px] text-slate-500">
-                {me.data?.role.name} · Online
-              </p>
+              <p className="truncate text-xs font-semibold">{me.data?.full_name}</p>
+              <p className="truncate text-[11px] text-slate-500">{me.data?.role.name} · Online</p>
             </div>
             <button
               aria-label="Sair"
@@ -166,18 +160,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             >
               <Menu className="size-5" />
             </button>
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 font-bold xl:hidden"
-            >
+            <Link href="/dashboard" className="flex items-center gap-2 font-bold xl:hidden">
               <Building2 className="text-emerald-600" />
               ImobCRM
             </Link>
             <div className="hidden items-center gap-2 text-sm text-slate-500 xl:flex">
               <Sparkles className="size-4 text-emerald-500" />
-              <span>
-                Olá, {me.data?.full_name?.split(" ")[0] || "bem-vindo"}
-              </span>
+              <span>Olá, {me.data?.full_name?.split(" ")[0] || "bem-vindo"}</span>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -186,9 +175,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               aria-label="Alternar tema"
               className="rounded-xl border border-slate-200 bg-white p-2.5 text-slate-600 transition hover:border-emerald-300 hover:text-emerald-600 dark:border-white/10 dark:bg-slate-900 dark:text-slate-300"
-              onClick={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
             >
               {resolvedTheme === "dark" ? (
                 <Sun className="size-[18px]" />
@@ -208,10 +195,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           />
           <aside className="relative flex h-full w-[min(85vw,300px)] flex-col bg-[#0b1220] p-4 text-white shadow-2xl">
             <div className="mb-7 flex items-center justify-between">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 font-bold"
-              >
+              <Link href="/dashboard" className="flex items-center gap-2 font-bold">
                 <Building2 className="text-emerald-400" />
                 ImobCRM
               </Link>
@@ -228,9 +212,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
       <main className="xl:ml-64">
-        <div className="mx-auto max-w-[1500px] p-4 sm:p-6 lg:p-8 xl:p-10">
-          {children}
-        </div>
+        <div className="mx-auto max-w-[1500px] p-4 sm:p-6 lg:p-8 xl:p-10">{children}</div>
       </main>
     </div>
   );

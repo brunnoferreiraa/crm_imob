@@ -8,12 +8,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import {
-  clientSchema,
-  type ClientFormInput,
-  type ClientFormOutput,
-} from "@/schemas/client";
 import { propertyTypes } from "@/lib/property-types";
+import { clientSchema, type ClientFormInput, type ClientFormOutput } from "@/schemas/client";
 
 const inputClass =
   "h-11 w-full rounded-xl border bg-white px-3 outline-none focus:border-emerald-500";
@@ -77,11 +73,7 @@ export function ClientForm() {
         {label}
       </label>
       <input id={name} type={type} className={inputClass} {...register(name)} />
-      {errors[name] && (
-        <p className="mt-1 text-sm text-red-600">
-          {String(errors[name]?.message)}
-        </p>
-      )}
+      {errors[name] && <p className="mt-1 text-sm text-red-600">{String(errors[name]?.message)}</p>}
     </div>
   );
 
@@ -129,7 +121,11 @@ export function ClientForm() {
             <label className="mb-1.5 block text-sm font-medium">Tipo de imóvel</label>
             <select className={inputClass} {...register("property_type")}>
               <option value="">Selecione</option>
-              {propertyTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              {propertyTypes.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
           {field("Quartos", "bedrooms", "number")}
@@ -139,18 +135,14 @@ export function ClientForm() {
           {field("Bairros (separados por vírgula)", "neighborhoods")}
         </div>
         <div className="mt-4">
-          <label className="mb-1.5 block text-sm font-medium">
-            Observações
-          </label>
+          <label className="mb-1.5 block text-sm font-medium">Observações</label>
           <textarea
             className="min-h-28 w-full rounded-xl border p-3 outline-none focus:border-emerald-500"
             {...register("notes")}
           />
         </div>
       </section>
-      {serverError && (
-        <p className="rounded-xl bg-red-50 p-3 text-red-700">{serverError}</p>
-      )}
+      {serverError && <p className="rounded-xl bg-red-50 p-3 text-red-700">{serverError}</p>}
       <div className="flex justify-end">
         <button
           disabled={mutation.isPending}

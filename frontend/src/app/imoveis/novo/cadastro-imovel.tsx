@@ -1,11 +1,11 @@
 "use client";
+import { AdminShell } from "@/components/admin-shell";
+import { propertyTypes } from "@/lib/property-types";
+import type { Owner } from "@/types/property";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AdminShell } from "@/components/admin-shell";
-import type { Owner } from "@/types/property";
-import { propertyTypes } from "@/lib/property-types";
 const input = "h-11 rounded-xl border px-3";
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -32,23 +32,14 @@ export default function NewPropertyPage() {
       const { data } = await axios.post("/api/properties", payload);
       router.push(`/imoveis/${data.id}`);
     } catch (reason) {
-      setError(
-        axios.isAxiosError(reason)
-          ? reason.response?.data?.detail
-          : "Erro ao salvar",
-      );
+      setError(axios.isAxiosError(reason) ? reason.response?.data?.detail : "Erro ao salvar");
     }
   }
   return (
     <AdminShell>
       <h1 className="text-3xl font-bold">Novo imóvel</h1>
-      <p className="mb-6 text-slate-500">
-        Cadastre dados comerciais, endereço e características.
-      </p>
-      <form
-        onSubmit={submit}
-        className="grid gap-4 rounded-2xl border bg-white p-6 md:grid-cols-2"
-      >
+      <p className="mb-6 text-slate-500">Cadastre dados comerciais, endereço e características.</p>
+      <form onSubmit={submit} className="grid gap-4 rounded-2xl border bg-white p-6 md:grid-cols-2">
         <input
           className={input}
           name="reference_code"
@@ -63,7 +54,11 @@ export default function NewPropertyPage() {
         </select>
         <select className={input} name="property_type" required>
           <option value="">Selecione o tipo do imóvel *</option>
-          {propertyTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          {propertyTypes.map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </select>
         <input
           className={input}
@@ -82,50 +77,14 @@ export default function NewPropertyPage() {
           ))}
         </select>
         <input className={input} name="street" placeholder="Rua *" required />
-        <input
-          className={input}
-          name="number"
-          placeholder="Número *"
-          required
-        />
-        <input
-          className={input}
-          name="neighborhood"
-          placeholder="Bairro *"
-          required
-        />
+        <input className={input} name="number" placeholder="Número *" required />
+        <input className={input} name="neighborhood" placeholder="Bairro *" required />
         <input className={input} name="city" placeholder="Cidade *" required />
-        <input
-          className={input}
-          name="state"
-          maxLength={2}
-          placeholder="UF *"
-          required
-        />
-        <input
-          className={input}
-          name="postal_code"
-          placeholder="CEP *"
-          required
-        />
-        <input
-          className={input}
-          name="bedrooms"
-          type="number"
-          placeholder="Quartos"
-        />
-        <input
-          className={input}
-          name="bathrooms"
-          type="number"
-          placeholder="Banheiros"
-        />
-        <input
-          className={input}
-          name="parking_spaces"
-          type="number"
-          placeholder="Vagas"
-        />
+        <input className={input} name="state" maxLength={2} placeholder="UF *" required />
+        <input className={input} name="postal_code" placeholder="CEP *" required />
+        <input className={input} name="bedrooms" type="number" placeholder="Quartos" />
+        <input className={input} name="bathrooms" type="number" placeholder="Banheiros" />
+        <input className={input} name="parking_spaces" type="number" placeholder="Vagas" />
         <input
           className={input}
           name="features"

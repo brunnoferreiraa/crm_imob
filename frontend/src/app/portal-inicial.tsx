@@ -19,14 +19,19 @@ export default function Home() {
               Relacionamentos melhores. Negócios mais rápidos.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Uma plataforma segura e organizada para sua equipe acompanhar
-              clientes, imóveis e oportunidades em um só lugar.
+              Uma plataforma segura e organizada para sua equipe acompanhar clientes, imóveis e
+              oportunidades em um só lugar.
             </p>
           </div>
           <div className="flex flex-col justify-center rounded-2xl bg-white/5 p-7">
             <h2 className="text-xl font-semibold">Estrutura inicial pronta</h2>
             <ul className="mt-6 space-y-4 text-slate-300">
-              {["Frontend Next.js 16", "API FastAPI", "PostgreSQL 17", "Ambiente Docker Compose"].map((item) => (
+              {[
+                "Frontend Next.js 16",
+                "API FastAPI",
+                "PostgreSQL 17",
+                "Ambiente Docker Compose",
+              ].map((item) => (
                 <li className="flex items-center gap-3" key={item}>
                   <CheckCircle2 className="size-5 text-emerald-400" aria-hidden="true" />
                   {item}

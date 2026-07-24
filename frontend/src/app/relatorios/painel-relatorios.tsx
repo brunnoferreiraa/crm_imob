@@ -1,3 +1,115 @@
-"use client";import{useQuery}from"@tanstack/react-query";import axios from"axios";import{useState}from"react";import{Bar,BarChart,CartesianGrid,ResponsiveContainer,Tooltip,XAxis,YAxis}from"recharts";import{AdminShell}from"@/components/admin-shell";
-type Reports={leads_by_source:{source:string;total:number}[];deals_by_stage:{stage:string;total:number;value:string}[];team_performance:{broker:string;deals:number;won:number;value:string}[];loss_reasons:{reason:string;total:number}[];most_visited_properties:{property:string;visits:number}[]};
-export default function Reports(){const[start,setStart]=useState(''),[end,setEnd]=useState('');const q=useQuery({queryKey:['reports',start,end],queryFn:async()=>(await axios.get<Reports>('/api/reports',{params:{start:start||undefined,end:end||undefined}})).data});return <AdminShell><h1 className="text-3xl font-bold">Relatórios</h1><div className="my-5 flex gap-3 rounded-2xl border bg-white p-4"><input type="date" value={start} onChange={e=>setStart(e.target.value)} className="rounded-xl border p-2"/><input type="date" value={end} onChange={e=>setEnd(e.target.value)} className="rounded-xl border p-2"/></div><div className="grid gap-5 lg:grid-cols-2"><Chart title="Leads por origem" data={q.data?.leads_by_source??[]} label="source" value="total"/><Chart title="Negociações por etapa" data={q.data?.deals_by_stage??[]} label="stage" value="total"/><Chart title="Motivos de perda" data={q.data?.loss_reasons??[]} label="reason" value="total"/><Chart title="Imóveis mais visitados" data={q.data?.most_visited_properties??[]} label="property" value="visits"/></div><section className="mt-5 rounded-2xl border bg-white p-5"><h2 className="font-semibold">Desempenho da equipe</h2><div className="mt-3 divide-y">{q.data?.team_performance.map(x=><div key={x.broker} className="grid grid-cols-4 py-3 text-sm"><b>{x.broker}</b><span>{x.deals} negócios</span><span>{x.won} ganhos</span><span>R$ {Number(x.value).toLocaleString('pt-BR')}</span></div>)}</div></section></AdminShell>};function Chart({title,data,label,value}:{title:string;data:Record<string,unknown>[];label:string;value:string}){return <section className="h-72 rounded-2xl border bg-white p-5"><h2 className="font-semibold">{title}</h2><ResponsiveContainer width="100%" height="85%"><BarChart data={data}><CartesianGrid strokeDasharray="3 3"/><XAxis dataKey={label} hide/><YAxis/><Tooltip/><Bar dataKey={value} fill="#059669" radius={6}/></BarChart></ResponsiveContainer></section>}
+"use client";
+import { AdminShell } from "@/components/admin-shell";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useState } from "react";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+type Reports = {
+  leads_by_source: { source: string; total: number }[];
+  deals_by_stage: { stage: string; total: number; value: string }[];
+  team_performance: {
+    broker: string;
+    deals: number;
+    won: number;
+    value: string;
+  }[];
+  loss_reasons: { reason: string; total: number }[];
+  most_visited_properties: { property: string; visits: number }[];
+};
+export default function Reports() {
+  const [start, setStart] = useState(""),
+    [end, setEnd] = useState("");
+  const q = useQuery({
+    queryKey: ["reports", start, end],
+    queryFn: async () =>
+      (
+        await axios.get<Reports>("/api/reports", {
+          params: { start: start || undefined, end: end || undefined },
+        })
+      ).data,
+  });
+  return (
+    <AdminShell>
+      <h1 className="text-3xl font-bold">Relatórios</h1>
+      <div className="my-5 flex gap-3 rounded-2xl border bg-white p-4">
+        <input
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          className="rounded-xl border p-2"
+        />
+        <input
+          type="date"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+          className="rounded-xl border p-2"
+        />
+      </div>
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Chart
+          title="Leads por origem"
+          data={q.data?.leads_by_source ?? []}
+          label="source"
+          value="total"
+        />
+        <Chart
+          title="Negociações por etapa"
+          data={q.data?.deals_by_stage ?? []}
+          label="stage"
+          value="total"
+        />
+        <Chart
+          title="Motivos de perda"
+          data={q.data?.loss_reasons ?? []}
+          label="reason"
+          value="total"
+        />
+        <Chart
+          title="Imóveis mais visitados"
+          data={q.data?.most_visited_properties ?? []}
+          label="property"
+          value="visits"
+        />
+      </div>
+      <section className="mt-5 rounded-2xl border bg-white p-5">
+        <h2 className="font-semibold">Desempenho da equipe</h2>
+        <div className="mt-3 divide-y">
+          {q.data?.team_performance.map((x) => (
+            <div key={x.broker} className="grid grid-cols-4 py-3 text-sm">
+              <b>{x.broker}</b>
+              <span>{x.deals} negócios</span>
+              <span>{x.won} ganhos</span>
+              <span>R$ {Number(x.value).toLocaleString("pt-BR")}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </AdminShell>
+  );
+}
+function Chart({
+  title,
+  data,
+  label,
+  value,
+}: {
+  title: string;
+  data: Record<string, unknown>[];
+  label: string;
+  value: string;
+}) {
+  return (
+    <section className="h-72 rounded-2xl border bg-white p-5">
+      <h2 className="font-semibold">{title}</h2>
+      <ResponsiveContainer width="100%" height="85%">
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey={label} hide />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey={value} fill="#059669" radius={6} />
+        </BarChart>
+      </ResponsiveContainer>
+    </section>
+  );
+}

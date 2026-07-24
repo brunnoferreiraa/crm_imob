@@ -14,7 +14,9 @@ class Role(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "roles"
 
     name: Mapped[str] = mapped_column(String(50), nullable=False)
-    slug: Mapped[str] = mapped_column(String(30), unique=True, index=True, nullable=False)
+    slug: Mapped[str] = mapped_column(
+        String(30), unique=True, index=True, nullable=False
+    )
     permissions: Mapped[list[str]] = mapped_column(
         ARRAY(String(80)), nullable=False, default=list
     )

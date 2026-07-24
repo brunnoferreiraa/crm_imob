@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test("redirects an anonymous user to login", async ({ browser }) => {
-  const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  const context = await browser.newContext({
+    storageState: { cookies: [], origins: [] },
+  });
   const page = await context.newPage();
 
   await page.goto("/dashboard");

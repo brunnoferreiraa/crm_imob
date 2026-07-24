@@ -1,1 +1,4 @@
-import{proxyApi}from"@/lib/api-proxy";export async function GET(request:Request){return proxyApi(request,"dashboard",[])}
+import { proxyApi } from "@/lib/api-proxy";
+export async function GET(request: Request) {
+  return proxyApi(request, "dashboard", []);
+}

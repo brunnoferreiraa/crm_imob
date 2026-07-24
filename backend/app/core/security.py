@@ -36,7 +36,9 @@ def create_token(
     }
     if extra:
         payload.update(extra)
-    return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm), expires_at
+    return jwt.encode(
+        payload, settings.secret_key, algorithm=settings.algorithm
+    ), expires_at
 
 
 def decode_token(token: str, expected_type: str) -> dict[str, Any]:

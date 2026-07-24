@@ -102,7 +102,9 @@ def export_clients(
     )
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(["nome", "email", "telefone", "whatsapp", "cpf", "tipo", "origem", "status"])
+    writer.writerow(
+        ["nome", "email", "telefone", "whatsapp", "cpf", "tipo", "origem", "status"]
+    )
     for client in page.items:
         writer.writerow(
             [

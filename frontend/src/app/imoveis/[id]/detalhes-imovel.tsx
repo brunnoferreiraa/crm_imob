@@ -1,4 +1,181 @@
 "use client";
-import{useMutation,useQuery,useQueryClient}from"@tanstack/react-query";import axios from"axios";import{ArrowLeft,ArrowRight,Building2,MapPin,Star,Trash2,Upload}from"lucide-react";import Image from"next/image";import{useParams}from"next/navigation";import{AdminShell}from"@/components/admin-shell";import type{Property,PropertyImage}from"@/types/property";
-const money=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
-export default function PropertyDetail(){const{id}=useParams<{id:string}>(),qc=useQueryClient();const query=useQuery({queryKey:["property",id],queryFn:async()=>(await axios.get<Property>(`/api/properties/${id}`)).data});const refresh=()=>qc.invalidateQueries({queryKey:["property",id]});const upload=useMutation({mutationFn:(file:File)=>{const form=new FormData();form.append("file",file);return axios.post(`/api/properties/${id}/images`,form)},onSuccess:refresh});const order=useMutation({mutationFn:(images:PropertyImage[])=>axios.put(`/api/properties/${id}/images/order`,{primary_id:images.find(x=>x.is_primary)?.id??images[0]?.id,images:images.map((x,position)=>({id:x.id,position}))}),onSuccess:refresh});const remove=useMutation({mutationFn:(imageId:string)=>axios.delete(`/api/properties/${id}/images/${imageId}`),onSuccess:refresh});if(!query.data)return <AdminShell><p>Carregando imóvel...</p></AdminShell>;const p=query.data,sorted=[...p.images].sort((a,b)=>a.position-b.position);function move(index:number,delta:number){const next=[...sorted],target=index+delta;if(target<0||target>=next.length)return;[next[index],next[target]]=[next[target],next[index]];order.mutate(next)}function primary(imageId:string){order.mutate(sorted.map(x=>({...x,is_primary:x.id===imageId})))}return <AdminShell><div className="grid gap-6 lg:grid-cols-[1fr_350px]"><main><div className="mb-5 grid gap-3 sm:grid-cols-2">{sorted.map((image,index)=><figure key={image.id} className={`group relative overflow-hidden rounded-2xl border bg-slate-200 ${image.is_primary?'sm:col-span-2':''}`}><Image unoptimized src={`/api/properties/${id}/images/${image.id}`} alt={`${p.title} - imagem ${index+1}`} width={1200} height={700} className="h-56 w-full object-cover"/><figcaption className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-slate-950/75 p-2 text-white"><span className="truncate text-xs">{image.is_primary?'Capa':image.file_name}</span><span className="flex gap-1"><button title="Mover para esquerda" onClick={()=>move(index,-1)} disabled={index===0}><ArrowLeft className="size-4"/></button><button title="Mover para direita" onClick={()=>move(index,1)} disabled={index===sorted.length-1}><ArrowRight className="size-4"/></button><button title="Definir como capa" onClick={()=>primary(image.id)}><Star className={`size-4 ${image.is_primary?'fill-amber-400 text-amber-400':''}`}/></button><button title="Excluir imagem" onClick={()=>remove.mutate(image.id)}><Trash2 className="size-4 text-red-300"/></button></span></figcaption></figure>)}{!sorted.length&&<div className="grid min-h-72 place-items-center rounded-2xl bg-slate-200 text-slate-500 sm:col-span-2">Sem imagens</div>}</div><section className="rounded-2xl border bg-white p-6 dark:bg-slate-900"><p className="text-sm font-semibold text-emerald-700">{p.reference_code} · {p.purpose}</p><h1 className="mt-1 text-3xl font-bold">{p.title}</h1><p className="mt-2 flex items-center gap-1 text-slate-500"><MapPin className="size-4"/>{p.street}, {p.number} — {p.neighborhood}, {p.city}/{p.state}</p><p className="mt-6 whitespace-pre-wrap text-slate-600 dark:text-slate-300">{p.description||"Sem descrição."}</p><div className="mt-6 flex flex-wrap gap-2">{p.features.map(f=><span className="rounded-full bg-slate-100 px-3 py-1 text-sm dark:bg-slate-800" key={f.id}>{f.name}</span>)}</div></section></main><aside className="space-y-5"><section className="rounded-2xl border bg-white p-6 dark:bg-slate-900"><strong className="text-2xl">{money.format(Number(p.price))}</strong><dl className="mt-5 grid grid-cols-2 gap-4 text-sm"><div><dt className="text-slate-500">Quartos</dt><dd>{p.bedrooms}</dd></div><div><dt className="text-slate-500">Banheiros</dt><dd>{p.bathrooms}</dd></div><div><dt className="text-slate-500">Vagas</dt><dd>{p.parking_spaces}</dd></div><div><dt className="text-slate-500">Proprietário</dt><dd>{p.owner.name}</dd></div></dl></section><label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed bg-white p-5 font-medium dark:bg-slate-900"><Upload className="size-5"/>{upload.isPending?"Enviando...":"Adicionar imagem"}<input className="hidden" type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>e.target.files?.[0]&&upload.mutate(e.target.files[0])}/></label>{(upload.isError||order.isError||remove.isError)&&<p className="text-sm text-red-600">Não foi possível concluir a operação.</p>}<div className="flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-800"><Building2/>{p.is_available?"Imóvel disponível":"Imóvel indisponível"}</div></aside></div></AdminShell>}
+import { AdminShell } from "@/components/admin-shell";
+import type { Property, PropertyImage } from "@/types/property";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { ArrowLeft, ArrowRight, Building2, MapPin, Star, Trash2, Upload } from "lucide-react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+const money = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+export default function PropertyDetail() {
+  const { id } = useParams<{ id: string }>(),
+    qc = useQueryClient();
+  const query = useQuery({
+    queryKey: ["property", id],
+    queryFn: async () => (await axios.get<Property>(`/api/properties/${id}`)).data,
+  });
+  const refresh = () => qc.invalidateQueries({ queryKey: ["property", id] });
+  const upload = useMutation({
+    mutationFn: (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      return axios.post(`/api/properties/${id}/images`, form);
+    },
+    onSuccess: refresh,
+  });
+  const order = useMutation({
+    mutationFn: (images: PropertyImage[]) =>
+      axios.put(`/api/properties/${id}/images/order`, {
+        primary_id: images.find((x) => x.is_primary)?.id ?? images[0]?.id,
+        images: images.map((x, position) => ({ id: x.id, position })),
+      }),
+    onSuccess: refresh,
+  });
+  const remove = useMutation({
+    mutationFn: (imageId: string) => axios.delete(`/api/properties/${id}/images/${imageId}`),
+    onSuccess: refresh,
+  });
+  if (!query.data)
+    return (
+      <AdminShell>
+        <p>Carregando imóvel...</p>
+      </AdminShell>
+    );
+  const p = query.data,
+    sorted = [...p.images].sort((a, b) => a.position - b.position);
+  function move(index: number, delta: number) {
+    const next = [...sorted],
+      target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    order.mutate(next);
+  }
+  function primary(imageId: string) {
+    order.mutate(sorted.map((x) => ({ ...x, is_primary: x.id === imageId })));
+  }
+  return (
+    <AdminShell>
+      <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
+        <main>
+          <div className="mb-5 grid gap-3 sm:grid-cols-2">
+            {sorted.map((image, index) => (
+              <figure
+                key={image.id}
+                className={`group relative overflow-hidden rounded-2xl border bg-slate-200 ${image.is_primary ? "sm:col-span-2" : ""}`}
+              >
+                <Image
+                  unoptimized
+                  src={`/api/properties/${id}/images/${image.id}`}
+                  alt={`${p.title} - imagem ${index + 1}`}
+                  width={1200}
+                  height={700}
+                  className="h-56 w-full object-cover"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-slate-950/75 p-2 text-white">
+                  <span className="truncate text-xs">
+                    {image.is_primary ? "Capa" : image.file_name}
+                  </span>
+                  <span className="flex gap-1">
+                    <button
+                      title="Mover para esquerda"
+                      onClick={() => move(index, -1)}
+                      disabled={index === 0}
+                    >
+                      <ArrowLeft className="size-4" />
+                    </button>
+                    <button
+                      title="Mover para direita"
+                      onClick={() => move(index, 1)}
+                      disabled={index === sorted.length - 1}
+                    >
+                      <ArrowRight className="size-4" />
+                    </button>
+                    <button title="Definir como capa" onClick={() => primary(image.id)}>
+                      <Star
+                        className={`size-4 ${image.is_primary ? "fill-amber-400 text-amber-400" : ""}`}
+                      />
+                    </button>
+                    <button title="Excluir imagem" onClick={() => remove.mutate(image.id)}>
+                      <Trash2 className="size-4 text-red-300" />
+                    </button>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+            {!sorted.length && (
+              <div className="grid min-h-72 place-items-center rounded-2xl bg-slate-200 text-slate-500 sm:col-span-2">
+                Sem imagens
+              </div>
+            )}
+          </div>
+          <section className="rounded-2xl border bg-white p-6 dark:bg-slate-900">
+            <p className="text-sm font-semibold text-emerald-700">
+              {p.reference_code} · {p.purpose}
+            </p>
+            <h1 className="mt-1 text-3xl font-bold">{p.title}</h1>
+            <p className="mt-2 flex items-center gap-1 text-slate-500">
+              <MapPin className="size-4" />
+              {p.street}, {p.number} — {p.neighborhood}, {p.city}/{p.state}
+            </p>
+            <p className="mt-6 whitespace-pre-wrap text-slate-600 dark:text-slate-300">
+              {p.description || "Sem descrição."}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {p.features.map((f) => (
+                <span
+                  className="rounded-full bg-slate-100 px-3 py-1 text-sm dark:bg-slate-800"
+                  key={f.id}
+                >
+                  {f.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        </main>
+        <aside className="space-y-5">
+          <section className="rounded-2xl border bg-white p-6 dark:bg-slate-900">
+            <strong className="text-2xl">{money.format(Number(p.price))}</strong>
+            <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <dt className="text-slate-500">Quartos</dt>
+                <dd>{p.bedrooms}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Banheiros</dt>
+                <dd>{p.bathrooms}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Vagas</dt>
+                <dd>{p.parking_spaces}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Proprietário</dt>
+                <dd>{p.owner.name}</dd>
+              </div>
+            </dl>
+          </section>
+          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed bg-white p-5 font-medium dark:bg-slate-900">
+            <Upload className="size-5" />
+            {upload.isPending ? "Enviando..." : "Adicionar imagem"}
+            <input
+              className="hidden"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => e.target.files?.[0] && upload.mutate(e.target.files[0])}
+            />
+          </label>
+          {(upload.isError || order.isError || remove.isError) && (
+            <p className="text-sm text-red-600">Não foi possível concluir a operação.</p>
+          )}
+          <div className="flex items-center gap-2 rounded-xl bg-emerald-50 p-4 text-emerald-800">
+            <Building2 />
+            {p.is_available ? "Imóvel disponível" : "Imóvel indisponível"}
+          </div>
+        </aside>
+      </div>
+    </AdminShell>
+  );
+}

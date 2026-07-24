@@ -1,4 +1,45 @@
-import{AlertCircle,Inbox}from"lucide-react";
-export function LoadingState({label="Carregando..."}:{label?:string}){return <div className="animate-pulse rounded-2xl border bg-card p-10 text-center text-muted-foreground">{label}</div>}
-export function EmptyState({title="Nenhum registro encontrado",description}:{title?:string;description?:string}){return <div className="rounded-2xl border bg-card p-10 text-center"><Inbox className="mx-auto mb-3 text-muted-foreground"/><h3 className="font-semibold">{title}</h3>{description&&<p className="mt-1 text-sm text-muted-foreground">{description}</p>}</div>}
-export function ErrorState({message="Não foi possível carregar os dados.",retry}:{message?:string;retry?:()=>void}){return <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700 dark:border-red-900 dark:bg-red-950/30"><AlertCircle className="mx-auto mb-3"/><p>{message}</p>{retry&&<button onClick={retry} className="mt-4 rounded-lg border px-3 py-2 text-sm font-semibold">Tentar novamente</button>}</div>}
+import { AlertCircle, Inbox } from "lucide-react";
+export function LoadingState({ label = "Carregando..." }: { label?: string }) {
+  return (
+    <div className="animate-pulse rounded-2xl border bg-card p-10 text-center text-muted-foreground">
+      {label}
+    </div>
+  );
+}
+export function EmptyState({
+  title = "Nenhum registro encontrado",
+  description,
+}: {
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <div className="rounded-2xl border bg-card p-10 text-center">
+      <Inbox className="mx-auto mb-3 text-muted-foreground" />
+      <h3 className="font-semibold">{title}</h3>
+      {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
+    </div>
+  );
+}
+export function ErrorState({
+  message = "Não foi possível carregar os dados.",
+  retry,
+}: {
+  message?: string;
+  retry?: () => void;
+}) {
+  return (
+    <div
+      role="alert"
+      className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700 dark:border-red-900 dark:bg-red-950/30"
+    >
+      <AlertCircle className="mx-auto mb-3" />
+      <p>{message}</p>
+      {retry && (
+        <button onClick={retry} className="mt-4 rounded-lg border px-3 py-2 text-sm font-semibold">
+          Tentar novamente
+        </button>
+      )}
+    </div>
+  );
+}

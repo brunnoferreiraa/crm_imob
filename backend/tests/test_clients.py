@@ -22,6 +22,4 @@ def test_client_normalizes_contact_data() -> None:
 
 def test_interest_rejects_inverted_budget() -> None:
     with pytest.raises(ValidationError):
-        ClientInterestInput(
-            budget_min=Decimal("500000"), budget_max=Decimal("300000")
-        )
+        ClientInterestInput(budget_min=Decimal("500000"), budget_max=Decimal("300000"))

@@ -14,8 +14,7 @@ test("creates, finds and deletes a client", async ({ page, request }) => {
     await page.locator('select[name="client_type"]').selectOption("comprador");
     const responsePromise = page.waitForResponse(
       (response) =>
-        response.url().endsWith("/api/clients") &&
-        response.request().method() === "POST",
+        response.url().endsWith("/api/clients") && response.request().method() === "POST",
     );
     await page.getByRole("button", { name: "Salvar cliente" }).click();
     const createResponse = await responsePromise;

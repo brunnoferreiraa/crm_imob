@@ -41,13 +41,17 @@ def token_response(access: str, refresh: str) -> TokenPair:
 
 @router.post("/login", response_model=AuthResponse)
 @limiter.limit(settings.login_rate_limit)
-def login(request: Request, data: LoginRequest, database: DatabaseSession) -> AuthResponse:
+def login(
+    request: Request, data: LoginRequest, database: DatabaseSession
+) -> AuthResponse:
     del request
     service = AuthService(database)
     try:
         user = service.authenticate(str(data.email), data.password)
     except InvalidCredentialsError as error:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)
+        ) from error
     access, refresh = service.issue_pair(user)
     return AuthResponse(
         **token_response(access, refresh).model_dump(),
@@ -60,7 +64,9 @@ def refresh(data: RefreshRequest, database: DatabaseSession) -> TokenPair:
     try:
         _, access, new_refresh = AuthService(database).rotate(data.refresh_token)
     except InvalidTokenError as error:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)
+        ) from error
     return token_response(access, new_refresh)
 
 
@@ -86,7 +92,9 @@ def change_password(
             current_user, data.current_password, data.new_password
         )
     except InvalidCredentialsError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
     return MessageResponse(message="Senha alterada; entre novamente")
 
 
@@ -108,5 +116,7 @@ def reset_password(
     try:
         AuthService(database).reset_password(data.token, data.new_password)
     except InvalidTokenError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
     return MessageResponse(message="Senha redefinida com sucesso")

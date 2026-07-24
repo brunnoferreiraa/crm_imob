@@ -18,12 +18,11 @@ const words: Record<string, string> = {
   Configurações: "Settings",
   "Menu principal": "Main menu",
   "Gestão imobiliária": "Real estate management",
-  "Operação": "Operations",
-  "Comercial": "Sales",
-  "Administração": "Administration",
+  Operação: "Operations",
+  Comercial: "Sales",
+  Administração: "Administration",
   "Painel comercial": "Sales dashboard",
-  "Acompanhe os principais números da sua operação.":
-    "Track the key numbers of your operation.",
+  "Acompanhe os principais números da sua operação.": "Track the key numbers of your operation.",
   "Leads novos": "New leads",
   "Em atendimento": "In progress",
   "Visitas agendadas": "Scheduled visits",
@@ -89,8 +88,7 @@ const words: Record<string, string> = {
   Quartos: "Bedrooms",
   Observações: "Notes",
   Selecione: "Select",
-  "Buscar por nome, e-mail, telefone ou CPF":
-    "Search by name, email, phone or CPF",
+  "Buscar por nome, e-mail, telefone ou CPF": "Search by name, email, phone or CPF",
   "Código, título ou bairro": "Code, title or neighborhood",
 };
 const originals = new WeakMap<Node, string>();
@@ -99,36 +97,27 @@ function translate(locale: Locale) {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
   while ((node = walker.nextNode())) {
-    if (
-      !node.parentElement ||
-      ["SCRIPT", "STYLE"].includes(node.parentElement.tagName)
-    )
-      continue;
+    if (!node.parentElement || ["SCRIPT", "STYLE"].includes(node.parentElement.tagName)) continue;
     if (!originals.has(node)) originals.set(node, node.textContent || "");
     const source = originals.get(node) || "",
       key = source.trim();
     const translated = locale === "en" && words[key] ? source.replace(key, words[key]) : source;
     if (node.textContent !== translated) node.textContent = translated;
   }
-  document
-    .querySelectorAll<HTMLElement>("[placeholder],[title]")
-    .forEach((el) =>
-      ["placeholder", "title"].forEach((attr) => {
-        const current = el.getAttribute(attr);
-        if (!current) return;
-        let attributes = originalAttributes.get(el);
-        if (!attributes) {
-          attributes = new Map<string, string>();
-          originalAttributes.set(el, attributes);
-        }
-        if (!attributes.has(attr)) attributes.set(attr, current);
-        const source = attributes.get(attr)!;
-        el.setAttribute(
-          attr,
-          locale === "en" ? words[source] || source : source,
-        );
-      }),
-    );
+  document.querySelectorAll<HTMLElement>("[placeholder],[title]").forEach((el) =>
+    ["placeholder", "title"].forEach((attr) => {
+      const current = el.getAttribute(attr);
+      if (!current) return;
+      let attributes = originalAttributes.get(el);
+      if (!attributes) {
+        attributes = new Map<string, string>();
+        originalAttributes.set(el, attributes);
+      }
+      if (!attributes.has(attr)) attributes.set(attr, current);
+      const source = attributes.get(attr)!;
+      el.setAttribute(attr, locale === "en" ? words[source] || source : source);
+    }),
+  );
   document.documentElement.lang = locale === "en" ? "en" : "pt-BR";
 }
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
@@ -160,10 +149,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("imobcrm-language", v);
     setValue(v);
   };
-  return (
-    <Context.Provider value={{ locale, setLocale }}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={{ locale, setLocale }}>{children}</Context.Provider>;
 }
 export const useLanguage = () => useContext(Context);

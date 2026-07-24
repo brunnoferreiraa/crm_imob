@@ -27,9 +27,7 @@ export function NotificationBell() {
   const day = 86400000;
   const alerts = [
     ...(tasks.data ?? [])
-      .filter(
-        (x) => x.status !== "concluida" && new Date(x.due_at).getTime() < now,
-      )
+      .filter((x) => x.status !== "concluida" && new Date(x.due_at).getTime() < now)
       .map((x) => ({
         id: x.id,
         href: "/tarefas",
@@ -84,9 +82,7 @@ export function NotificationBell() {
               </Link>
             ))}
             {alerts.length === 0 && (
-              <p className="p-6 text-center text-sm text-slate-500">
-                Tudo em dia por aqui.
-              </p>
+              <p className="p-6 text-center text-sm text-slate-500">Tudo em dia por aqui.</p>
             )}
           </div>
         </div>

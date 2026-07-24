@@ -26,14 +26,19 @@ class Client(UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin, Base):
     lead_source: Mapped[str | None] = mapped_column(String(50), index=True)
     status: Mapped[str] = mapped_column(String(30), index=True, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text)
-    next_contact_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    next_contact_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), index=True
+    )
     responsible_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), index=True
     )
 
     responsible: Mapped["User"] = relationship(lazy="joined")
     interest: Mapped["ClientInterest"] = relationship(
-        back_populates="client", cascade="all, delete-orphan", uselist=False, lazy="joined"
+        back_populates="client",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="joined",
     )
 
 
@@ -46,7 +51,9 @@ class ClientInterest(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     budget_min: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     budget_max: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     property_type: Mapped[str | None] = mapped_column(String(50))
-    cities: Mapped[list[str]] = mapped_column(ARRAY(String(100)), default=list, nullable=False)
+    cities: Mapped[list[str]] = mapped_column(
+        ARRAY(String(100)), default=list, nullable=False
+    )
     neighborhoods: Mapped[list[str]] = mapped_column(
         ARRAY(String(100)), default=list, nullable=False
     )

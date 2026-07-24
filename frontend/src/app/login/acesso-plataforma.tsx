@@ -1,5 +1,7 @@
 "use client";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import {
@@ -19,8 +21,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { loginSchema, type LoginInput } from "@/schemas/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -66,9 +66,7 @@ export default function LoginPage() {
           </span>
           <span>
             <strong className="block text-xl leading-none">ImobCRM</strong>
-            <small className="text-[11px] text-slate-500">
-              Gestão imobiliária
-            </small>
+            <small className="text-[11px] text-slate-500">Gestão imobiliária</small>
           </span>
         </Link>
         <div className="relative my-auto max-w-2xl">
@@ -84,8 +82,8 @@ export default function LoginPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-400">
-            Centralize clientes, imóveis e negociações em uma experiência criada
-            para equipes que querem vender mais.
+            Centralize clientes, imóveis e negociações em uma experiência criada para equipes que
+            querem vender mais.
           </p>
           <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
             {[
@@ -133,16 +131,9 @@ export default function LoginPage() {
               Entre com suas credenciais para acessar sua área de trabalho.
             </p>
           </div>
-          <form
-            className="space-y-5"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-          >
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div>
-              <label
-                className="mb-2 block text-sm font-semibold"
-                htmlFor="email"
-              >
+              <label className="mb-2 block text-sm font-semibold" htmlFor="email">
                 E-mail
               </label>
               <input
@@ -155,9 +146,7 @@ export default function LoginPage() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="mt-1.5 text-sm text-red-600">
-                  {errors.email.message}
-                </p>
+                <p className="mt-1.5 text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
             <div>
@@ -187,17 +176,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl p-2.5 text-slate-400 hover:bg-slate-50 hover:text-slate-700"
                 >
-                  {showPassword ? (
-                    <EyeOff className="size-5" />
-                  ) : (
-                    <Eye className="size-5" />
-                  )}
+                  {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1.5 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
+                <p className="mt-1.5 text-sm text-red-600">{errors.password.message}</p>
               )}
             </div>
             {serverError && (
@@ -226,8 +209,7 @@ export default function LoginPage() {
             </button>
           </form>
           <p className="mt-8 text-center text-xs text-slate-400">
-            Ao entrar, você concorda com as políticas de segurança da
-            plataforma.
+            Ao entrar, você concorda com as políticas de segurança da plataforma.
           </p>
         </div>
       </section>

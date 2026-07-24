@@ -77,14 +77,20 @@ class ClientService:
 
     def create(self, data: ClientCreate) -> Client:
         duplicate = self.repository.find_duplicate(
-            cpf=data.cpf, email=str(data.email) if data.email else None, phone=data.phone
+            cpf=data.cpf,
+            email=str(data.email) if data.email else None,
+            phone=data.phone,
         )
         if duplicate:
-            raise ClientConflictError(f"Possível duplicidade com o cliente {duplicate.name}")
+            raise ClientConflictError(
+                f"Possível duplicidade com o cliente {duplicate.name}"
+            )
         responsible_id = data.responsible_id or self.current_user.id
-        if responsible_id != self.current_user.id and not self.current_user.has_permission(
-            Permission.LEADS_ASSIGN.value
-        ) and not self.current_user.has_permission(Permission.USERS_MANAGE.value):
+        if (
+            responsible_id != self.current_user.id
+            and not self.current_user.has_permission(Permission.LEADS_ASSIGN.value)
+            and not self.current_user.has_permission(Permission.USERS_MANAGE.value)
+        ):
             responsible_id = self.current_user.id
         if self.repository.get_active_user(responsible_id) is None:
             raise ResponsibleNotFoundError("Corretor responsável não encontrado")
@@ -109,7 +115,9 @@ class ClientService:
             exclude_id=client.id,
         )
         if duplicate:
-            raise ClientConflictError(f"Possível duplicidade com o cliente {duplicate.name}")
+            raise ClientConflictError(
+                f"Possível duplicidade com o cliente {duplicate.name}"
+            )
         for field, value in changes.items():
             setattr(client, field, value)
         if data.interest is not None:
